@@ -95,16 +95,26 @@ void btc(char **av) {
 	std::string db_name("data.csv");
 	std::ifstream data_opened(db_name);
 
-	if (file_opened.fail() || data_opened.fail()) {
+	if (file_opened.fail()) {
 		std::cout << "Failed to open file: " << file << std::endl;
+		if (!data_opened.fail())
+			data_opened.close();
 		exit(1);
 	}
+	if (data_opened.fail()) {
+		std::cout << "Failed to open file: " << db_name << std::endl;
+		file_opened.close();
+		exit(1);
+	}
+	
 
 	std::string data_line;
 	std::getline(data_opened, data_line);
 	if (data_line != "date,exchange_rate")
 	{
 		std::cout << "Error: the head on data.csv is wrong" << std::endl;
+		file_opened.close();
+		data_opened.close();
 		exit(1);
 	}
 	while (std::getline(data_opened, data_line)) {
@@ -123,6 +133,8 @@ void btc(char **av) {
 	if (line != "date | value")
 	{
 		std::cout << "Error: the head of the input file is wrong" << std::endl;
+		file_opened.close();
+		data_opened.close();
 		exit(1);
 	}
 	while (std::getline(file_opened, line)) {
@@ -166,8 +178,12 @@ void btc(char **av) {
 		}
 
 		if (process_data(data, pair_file.first) != -1)
-			std::cout << pair_file.first << " => " <<  pair_file.second << " = " << pair_file.second * process_data(data, pair_file.first)<< std::endl;
+			std::cout << pair_file.first << " => " \
+						<<  pair_file.second << " = " \
+						<< pair_file.second * process_data(data, pair_file.first) \
+						<< std::endl;
 	}
 
 	file_opened.close();
+	data_opened.close();
 }

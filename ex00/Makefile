@@ -1,8 +1,8 @@
 NAME = btc
 
-OBJS = main.o BitcoinExchange.o
-
 FILES = main.cpp BitcoinExchange.cpp
+
+OBJS = main.o BitcoinExchange.o
 
 CXX = c++
 
