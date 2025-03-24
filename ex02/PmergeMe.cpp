@@ -1,5 +1,6 @@
 #include "PmergeMe.hpp"
 
+
 bool is_number(std::string str) {
 	if (str[0] == '+' || str == "-0")
 		str.erase(0, 1);
@@ -16,87 +17,130 @@ void printo(int n) {
     std::cout << n << " ";
 }
 
-
-
-std::vector<int> generateJacobSequence(size_t size)
+long	jacobsthalGenerator(long n)
 {
-	std::vector<int> jacob;
-	jacob.push_back(0);
-	if (size == 0)
-		return jacob;
-	jacob.push_back(1);
-	for (size_t i = 2; i <= size; ++i)
+	if (n == 0)
+		return (0);
+	if (n == 1)
+		return (1);
+	long	prev = 0, curr = 1;
+	for (long i = 2; i <= n; i++)
 	{
-		jacob.push_back(jacob[i - 1] + 2 * jacob[i - 2]);
+		long	next = curr + 2 * prev;
+		prev = curr;
+		curr = next;
 	}
-	return jacob;
+	return (curr);
 }
 
-void insertSortVector(std::vector<int> &sorted, int element)
+
+void	swapUnits(vector_int_it firstUnit, int unitSize)
 {
-	std::vector<int>::iterator pos = std::lower_bound(sorted.begin(), sorted.end(), element);
-	sorted.insert(pos, element);
+	vector_int_it	start = advanceIter(firstUnit, -unitSize + 1);
+	vector_int_it	end = advanceIter(start, unitSize);
+	while (start != end)
+	{
+		std::iter_swap(start, advanceIter(start, unitSize));
+		start++;
+	}
 }
 
-void mergeSortV(std::vector<int> &arr, std::vector<int> &sorted)
+void	mergeinsertionsortV(vector_int &vec_container, int unitSize)
 {
-	if (!arr.size())
-		return;
-	int unpaired = arr.back();
+	int	numOfUnits = vec_container.size() / unitSize;
+	if (numOfUnits < 2)
+		return ;
+	
+	bool	hasStraggler = numOfUnits % 2 == 1;
 
-	if (arr.size() == 1)
-	{
-		insertSortVector(sorted, arr[0]);
-		return;
-	}
-	std::vector<int> larger;
-	std::vector<int> smaller;
-	std::vector<int> tmpSorted;
+	vector_int_it start = vec_container.begin();
+	vector_int_it end = advanceIter(vec_container.begin(), numOfUnits * unitSize - (hasStraggler * unitSize));
 
-	for (size_t i = 0; i + 1 < arr.size(); i += 2)
+	for (vector_int_it it = start; it != end; std::advance(it, 2 * unitSize))
 	{
-		if (arr[i] > arr[i + 1])
+		vector_int_it	firstUnit = advanceIter(it, unitSize - 1);
+		vector_int_it	secondUnit = advanceIter(it, unitSize * 2 - 1);
+		std::cout << "`" << *firstUnit << "` compaired to `" << *secondUnit << "`\n";
+		if (*firstUnit > *secondUnit)
+			swapUnits(firstUnit, unitSize);
+	}
+
+	mergeinsertionsortV(vec_container, unitSize * 2);
+
+	std::vector< vector_int_it>	main;
+	std::vector< vector_int_it>	pend;
+	main.insert(main.end(), advanceIter(vec_container.begin(), unitSize - 1));
+	main.insert(main.end(), advanceIter(vec_container.begin(), (unitSize * 2) - 1));
+	for (int i = 4; i <= numOfUnits; i += 2)
+	{
+		pend.insert(pend.end(), advanceIter(vec_container.begin(), unitSize * (i - 1) - 1));
+		main.insert(main.end(), advanceIter(vec_container.begin(), unitSize * i - 1));
+	}
+
+	if (hasStraggler)
+		pend.insert(pend.end(), advanceIter(vec_container.begin(), unitSize * numOfUnits - 1));
+
+	long	prevJacobsthal = jacobsthalGenerator(2);
+	int		insertedNums = 0;
+	for (int k = 3; 0 == 0; k++)
+	{
+		long	currJacobsthal = jacobsthalGenerator(k);
+		long	jacobsthalDiff = currJacobsthal - prevJacobsthal;
+		int		offset = 0;
+		if (jacobsthalDiff > static_cast<long>(pend.size()))
+			break ;
+		long	numOfUnitInsertions = jacobsthalDiff;
+
+		std::vector< vector_int_it>::iterator	pendIt = pend.begin() + jacobsthalDiff - 1;
+		long int	boundIndex = currJacobsthal + insertedNums;
+		while (numOfUnitInsertions--)
 		{
-			larger.push_back(arr[i]);
-			smaller.push_back(arr[i + 1]);
+			std::vector< vector_int_it>::iterator boundIt = main.begin() + boundIndex - offset;
+			std::vector< vector_int_it>::iterator idx = std::lower_bound(main.begin(), boundIt, *pendIt, compare<vector_int_it>);
+			std::vector< vector_int_it>::iterator inserted = main.insert(idx, *pendIt);
+			pendIt = pend.erase(pendIt);
+			if (pendIt != pend.begin())
+				pendIt--;
+			offset += ((inserted - main.begin()) == boundIndex);
 		}
-		else
+		prevJacobsthal = currJacobsthal;
+		insertedNums += jacobsthalDiff;
+		offset = 0;
+	}
+
+	for (long unsigned int i = 0; i < pend.size(); i++)
+	{
+		std::vector< vector_int_it>::iterator	currPend = pend.begin() + i;
+		std::vector< vector_int_it>::iterator	currBound = advanceIter(main.begin(), main.size() - pend.size() + i + hasStraggler);
+		std::vector< vector_int_it>::iterator	idx = std::lower_bound(main.begin(), currBound, *currPend, compare<vector_int_it>);
+		main.insert(idx, *currPend);
+	}
+
+	vector_int	copy;
+	copy.reserve(vec_container.size());
+	for (std::vector< vector_int_it>::iterator it = main.begin(); it != main.end(); it++)
+	{
+		for (int i = 0; i < unitSize; i++)
 		{
-			larger.push_back(arr[i + 1]);
-			smaller.push_back(arr[i]);
+			vector_int_it	unitStart = *it;
+			std::advance(unitStart, -unitSize + i + 1);
+			copy.insert(copy.end(), *unitStart);
 		}
 	}
-	if (smaller.size() > 2)
+
+	vector_int_it containerIt = vec_container.begin();
+	vector_int_it copyIt = copy.begin();
+	while (copyIt != copy.end())
 	{
-		larger.insert(larger.begin(), smaller.front());
-		smaller.erase(smaller.begin());
+		*containerIt = *copyIt;
+		containerIt++;
+		copyIt++;
 	}
-	if (!larger.empty())
-		mergeSortV(larger, tmpSorted);
-	if (arr.size() % 2 != 0)
-		insertSortVector(tmpSorted, unpaired);
-	if (!smaller.empty())
-		mergeSortV(smaller, tmpSorted);
-	std::vector<int> jacob = generateJacobSequence(tmpSorted.size());
-    std::cout << "jacob : ";
-	for (size_t i = 0; i < jacob.size(); i++)
-	{
-		if (static_cast<size_t>(jacob[i]) < tmpSorted.size())
-		{
-            std::cout << i << " ";
-			insertSortVector(sorted, tmpSorted[jacob[i]]);
-			tmpSorted.erase(tmpSorted.begin() + jacob[i]);
-			jacob = generateJacobSequence(tmpSorted.size());
-		}
-	}
-    std::cout << std::endl;
-	for (size_t i = 0; i < tmpSorted.size(); i++)
-		insertSortVector(sorted, tmpSorted[i]);
 }
 
 
 void merge_insert(int ac, char **av) {
-    std::vector<int> vectorContainer;
+    vector_int vectorContainer;
     std::deque<int> dequeContainer;
     for (int i = 1; i < ac; i++) {
         std::string str(av[i]);
@@ -119,19 +163,13 @@ void merge_insert(int ac, char **av) {
     std::cout << "Before:" << std::endl;
     std::for_each(vectorContainer.begin(), vectorContainer.end(), printo);
     std::cout << std::endl;
-    // std::for_each(dequeContainer.begin(), dequeContainer.end(), printo);
-    // std::cout << std::endl;
 
-    std::vector<int> sorted;
-    mergeSortV(vectorContainer, sorted);
-    vectorContainer = sorted;
-    // mergeInsertionSort(dequeContainer);
+
+    mergeinsertionsortV(vectorContainer, 1);
+
 
     std::cout << "After:" << std::endl;
     std::for_each(vectorContainer.begin(), vectorContainer.end(), printo);
     std::cout << std::endl;
-
-    // std::for_each(dequeContainer.begin(), dequeContainer.end(), printo);
-    // std::cout << std::endl;
 }
 
