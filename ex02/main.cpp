@@ -6,6 +6,6 @@ int main (int ac, char **av) {
         std::cerr << "Error" << std::endl;
         return (1);
     }
-    merge_insert(ac, av);
+    merge_insert_global(ac, av);
     return (0);
 }

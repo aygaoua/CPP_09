@@ -1,6 +1,5 @@
 #include "PmergeMe.hpp"
 
-
 bool is_number(std::string str) {
 	if (str[0] == '+' || str == "-0")
 		str.erase(0, 1);
@@ -23,96 +22,116 @@ long	jacobsthalGenerator(long n)
 		return (0);
 	if (n == 1)
 		return (1);
-	long	prev = 0, curr = 1;
-	for (long i = 2; i <= n; i++)
-	{
-		long	next = curr + 2 * prev;
-		prev = curr;
-		curr = next;
-	}
-	return (curr);
+	return((pow(2, n) - pow(-1, n)) / 3);
 }
 
 
-void	swapUnits(vector_int_it firstUnit, int unitSize)
+void	swap_pairs(vector_int_it first, int pair_size)
 {
-	vector_int_it	start = advanceIter(firstUnit, -unitSize + 1);
-	vector_int_it	end = advanceIter(start, unitSize);
+	vector_int_it	start = stepsIt(first, -pair_size + 1);
+	vector_int_it	end = stepsIt(start, pair_size);
 	while (start != end)
 	{
-		std::iter_swap(start, advanceIter(start, unitSize));
+		std::iter_swap(start, stepsIt(start, pair_size));
 		start++;
 	}
 }
 
-void	mergeinsertionsortV(vector_int &vec_container, int unitSize)
+void	mergeinsertionsortV(vector_int &vec_container, int pair_size)
 {
-	int	numOfUnits = vec_container.size() / unitSize;
-	if (numOfUnits < 2)
+	int	pairs_num = vec_container.size() / pair_size;
+	if (pairs_num < 2)
 		return ;
 	
-	bool	hasStraggler = numOfUnits % 2 == 1;
+	bool	stragller = (pairs_num % 2);
 
 	vector_int_it start = vec_container.begin();
-	vector_int_it end = advanceIter(vec_container.begin(), numOfUnits * unitSize - (hasStraggler * unitSize));
+	vector_int_it end = stepsIt(vec_container.begin(), \
+										pairs_num * pair_size - (stragller * pair_size));
 
-	for (vector_int_it it = start; it != end; std::advance(it, 2 * unitSize))
+	std::cout << "end: " << std::endl;
+	for (vector_int_it it = start; it != end; std::advance(it, 2 * pair_size))
 	{
-		vector_int_it	firstUnit = advanceIter(it, unitSize - 1);
-		vector_int_it	secondUnit = advanceIter(it, unitSize * 2 - 1);
-		std::cout << "`" << *firstUnit << "` compaired to `" << *secondUnit << "`\n";
-		if (*firstUnit > *secondUnit)
-			swapUnits(firstUnit, unitSize);
+		vector_int_it	first = stepsIt(it, pair_size - 1);
+		vector_int_it	second = stepsIt(it, pair_size * 2 - 1);
+		std::cout << "`" << pair_size - 1 << "` compaired to `" << pair_size * 2 - 1 << "`\n";
+		if (*first > *second)
+			swap_pairs(first, pair_size);
 	}
+	std::cout << std::endl;
 
-	mergeinsertionsortV(vec_container, unitSize * 2);
+	mergeinsertionsortV(vec_container, pair_size * 2);
 
 	std::vector< vector_int_it>	main;
 	std::vector< vector_int_it>	pend;
-	main.insert(main.end(), advanceIter(vec_container.begin(), unitSize - 1));
-	main.insert(main.end(), advanceIter(vec_container.begin(), (unitSize * 2) - 1));
-	for (int i = 4; i <= numOfUnits; i += 2)
+	main.insert(main.end(), stepsIt(vec_container.begin(), pair_size - 1));
+	main.insert(main.end(), stepsIt(vec_container.begin(), (pair_size * 2) - 1));
+	// std::cout << "maino: " << *stepsIt(vec_container.begin(), pair_size - 1) << std::endl;
+	// std::cout << "maino: " << *stepsIt(vec_container.begin(), (pair_size * 2) - 1) << std::endl;
+	for (int i = 4; i <= pairs_num; i += 2)
 	{
-		pend.insert(pend.end(), advanceIter(vec_container.begin(), unitSize * (i - 1) - 1));
-		main.insert(main.end(), advanceIter(vec_container.begin(), unitSize * i - 1));
+		// std::cout << "maino: " << *stepsIt(vec_container.begin(), pair_size * i - 1) << std::endl;
+		// std::cout << "pendo: " << *stepsIt(vec_container.begin(), pair_size * (i - 1) - 1) << std::endl;
+		pend.insert(pend.end(), stepsIt(vec_container.begin(), (pair_size * (i - 1)) - 1));
+		main.insert(main.end(), stepsIt(vec_container.begin(), (pair_size * i) - 1));
 	}
-
-	if (hasStraggler)
-		pend.insert(pend.end(), advanceIter(vec_container.begin(), unitSize * numOfUnits - 1));
-
-	long	prevJacobsthal = jacobsthalGenerator(2);
-	int		insertedNums = 0;
+	if (stragller)
+		pend.insert(pend.end(), stepsIt(vec_container.begin(), pair_size * pairs_num - 1));
+	std::cout << "main: ";
+	for(size_t i = 0; i != main.size(); ++i)
+	{
+		std::cout << *main[i] << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "pend: ";
+	for(size_t i = 0; i != pend.size(); ++i)
+	{
+		std::cout << *pend[i] << " ";
+	}
+	std::cout << std::endl;
+	std::cout << std::endl;
+	long	prev_j_s = jacobsthalGenerator(2);
+	int		inserted_nbs = 0;
 	for (int k = 3; 0 == 0; k++)
 	{
-		long	currJacobsthal = jacobsthalGenerator(k);
-		long	jacobsthalDiff = currJacobsthal - prevJacobsthal;
+		long	curr_j_s = jacobsthalGenerator(k);
+		long	diff_j_s = curr_j_s - prev_j_s;
 		int		offset = 0;
-		if (jacobsthalDiff > static_cast<long>(pend.size()))
+		if (diff_j_s > static_cast<long>(pend.size()))
 			break ;
-		long	numOfUnitInsertions = jacobsthalDiff;
+		long	nb_pairs_isrt = diff_j_s;
 
-		std::vector< vector_int_it>::iterator	pendIt = pend.begin() + jacobsthalDiff - 1;
-		long int	boundIndex = currJacobsthal + insertedNums;
-		while (numOfUnitInsertions--)
+		std::vector< vector_int_it>::iterator	pend_it = pend.begin() + diff_j_s - 1;
+		long int	bound_ndx = curr_j_s + inserted_nbs;
+		while (nb_pairs_isrt--)
 		{
-			std::vector< vector_int_it>::iterator boundIt = main.begin() + boundIndex - offset;
-			std::vector< vector_int_it>::iterator idx = std::lower_bound(main.begin(), boundIt, *pendIt, compare<vector_int_it>);
-			std::vector< vector_int_it>::iterator inserted = main.insert(idx, *pendIt);
-			pendIt = pend.erase(pendIt);
-			if (pendIt != pend.begin())
-				pendIt--;
-			offset += ((inserted - main.begin()) == boundIndex);
+			std::vector< vector_int_it>::iterator bound_it = main.begin() + bound_ndx - offset;
+			std::cout << "idx: " << nb_pairs_isrt + prev_j_s + 1 << " | " << static_cast<long>(pend.size()) << std::endl;
+			std::vector< vector_int_it>::iterator idx = std::lower_bound(main.begin(), \
+																			bound_it, \
+																			*pend_it, \
+																			compare<vector_int_it>);
+			std::vector< vector_int_it>::iterator inserted = main.insert(idx, *pend_it);
+			pend_it = pend.erase(pend_it);
+			if (pend_it != pend.begin())
+				pend_it--;
+			offset += ((inserted - main.begin()) == bound_ndx);
 		}
-		prevJacobsthal = currJacobsthal;
-		insertedNums += jacobsthalDiff;
+		prev_j_s = curr_j_s;
+		inserted_nbs += diff_j_s;
 		offset = 0;
 	}
 
-	for (long unsigned int i = 0; i < pend.size(); i++)
+	for (size_t i = 0; i < pend.size(); i++)
 	{
 		std::vector< vector_int_it>::iterator	currPend = pend.begin() + i;
-		std::vector< vector_int_it>::iterator	currBound = advanceIter(main.begin(), main.size() - pend.size() + i + hasStraggler);
-		std::vector< vector_int_it>::iterator	idx = std::lower_bound(main.begin(), currBound, *currPend, compare<vector_int_it>);
+		std::vector< vector_int_it>::iterator	currBound = stepsIt(main.begin(), \
+																		main.size() - pend.size() + i + stragller);
+		std::vector< vector_int_it>::iterator	idx = std::lower_bound(main.begin(), \
+																		currBound, \
+																		*currPend, \
+																		compare<vector_int_it>);
+		std::cout << "***********" << pair_size / 2 + 1 << " ||| " << **currPend << "\n";
 		main.insert(idx, *currPend);
 	}
 
@@ -120,10 +139,10 @@ void	mergeinsertionsortV(vector_int &vec_container, int unitSize)
 	copy.reserve(vec_container.size());
 	for (std::vector< vector_int_it>::iterator it = main.begin(); it != main.end(); it++)
 	{
-		for (int i = 0; i < unitSize; i++)
+		for (int i = 0; i < pair_size; i++)
 		{
 			vector_int_it	unitStart = *it;
-			std::advance(unitStart, -unitSize + i + 1);
+			std::advance(unitStart, -pair_size + i + 1);
 			copy.insert(copy.end(), *unitStart);
 		}
 	}
@@ -136,12 +155,17 @@ void	mergeinsertionsortV(vector_int &vec_container, int unitSize)
 		containerIt++;
 		copyIt++;
 	}
+	std::cout << std::endl;
+	std::cout << "my sec: ";
+	std::for_each(vec_container.begin(), vec_container.end(), printo);
+	std::cout << std::endl;
+	std::cout << std::endl;
 }
 
 
-void merge_insert(int ac, char **av) {
-    vector_int vectorContainer;
-    std::deque<int> dequeContainer;
+void merge_insert_global(int ac, char **av) {
+    vector_int vec_container;
+    deque_int dq_container;
     for (int i = 1; i < ac; i++) {
         std::string str(av[i]);
         if (is_number(str)) {
@@ -152,8 +176,8 @@ void merge_insert(int ac, char **av) {
                     std::cerr << "Error: not an positive integer" << std::endl;
                     exit(1);
                 }
-                dequeContainer.push_back(value);
-                vectorContainer.push_back(value);
+                dq_container.push_back(value);
+                vec_container.push_back(value);
         } else {
             std::cerr << "Invalid value: `" << str << "`" <<  std::endl;
             exit (1);
@@ -161,15 +185,15 @@ void merge_insert(int ac, char **av) {
 
     }
     std::cout << "Before:" << std::endl;
-    std::for_each(vectorContainer.begin(), vectorContainer.end(), printo);
+    std::for_each(vec_container.begin(), vec_container.end(), printo);
     std::cout << std::endl;
 
 
-    mergeinsertionsortV(vectorContainer, 1);
+    mergeinsertionsortV(vec_container, 1);
 
 
     std::cout << "After:" << std::endl;
-    std::for_each(vectorContainer.begin(), vectorContainer.end(), printo);
+    std::for_each(vec_container.begin(), vec_container.end(), printo);
     std::cout << std::endl;
 }
 
