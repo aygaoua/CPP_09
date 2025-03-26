@@ -6,6 +6,7 @@
 #include <deque>
 #include <vector>
 #include <algorithm>
+#include <ctime>
 
 typedef std::vector<int>			vector_int;
 typedef std::vector<int>::iterator	vector_int_it;
@@ -27,6 +28,9 @@ T stepsIt(T it, int steps)
 template <typename T>
 bool	compare(T left, T right)
 {
+	static int g;
+
+	g++;
 	return (*left < *right);
 }
 
