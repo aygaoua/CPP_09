@@ -10,10 +10,10 @@ int main (int ac, char **av) {
         merge_insert_global(ac, av);
     }
     catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     catch (...) {
-        std::cerr << "Error : catch in the main" << std::endl;
+        std::cerr << "Error: catch in the main" << std::endl;
     }
     return (0);
 }
