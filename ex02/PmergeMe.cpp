@@ -1,11 +1,12 @@
 #include "PmergeMe.hpp"
 
+
 bool is_number(std::string str) {
-	if (str[0] == '+' || str == "-0")
+	if (str[0] == '+')
 		str.erase(0, 1);
 	if (!std::isdigit(str[0]))
 		return false;
-	for (unsigned long i = 0; i < str.length(); i++) {
+	for (size_t i = 0; i < str.length(); i++) {
 		if (!std::isdigit(str[i]))
 			return false;
 	}
@@ -28,7 +29,7 @@ size_t	jacobsthalGenerator(size_t n)
 
 void	swap_pairs(vector_int_it first, int pair_size)
 {
-	vector_int_it	start = stepsIt(first, -pair_size + 1);
+	vector_int_it	start = stepsIt(first, (-pair_size) + 1);
 	vector_int_it	end = stepsIt(start, pair_size);
 	while (start != end)
 	{
@@ -36,9 +37,10 @@ void	swap_pairs(vector_int_it first, int pair_size)
 		start++;
 	}
 }
+
 void	swap_pairs(deque_int_it first, int pair_size)
 {
-	deque_int_it	start = stepsIt(first, -pair_size + 1);
+	deque_int_it	start = stepsIt(first, (-pair_size) + 1);
 	deque_int_it	end = stepsIt(start, pair_size);
 	while (start != end)
 	{
@@ -55,11 +57,11 @@ void	mergeinsertionsortV(vector_int &vec_container, int pair_size)
 
 	bool	stragller = (pairs_num % 2);
 
-	vector_int_it start = vec_container.begin();
+	vector_int_it begin = vec_container.begin();
 	vector_int_it end = stepsIt(vec_container.begin(), \
 										pairs_num * pair_size - (stragller * pair_size));
 
-	for (vector_int_it it = start; it != end; std::advance(it, 2 * pair_size))
+	for (vector_int_it it = begin; it != end; std::advance(it, 2 * pair_size))
 	{
 		vector_int_it	first = stepsIt(it, pair_size - 1);
 		vector_int_it	second = stepsIt(it, pair_size * 2 - 1);
@@ -129,19 +131,19 @@ void	mergeinsertionsortV(vector_int &vec_container, int pair_size)
 	{
 		for (int i = 0; i < pair_size; i++)
 		{
-			vector_int_it	unitStart = *it;
-			std::advance(unitStart, -pair_size + i + 1);
-			copy.insert(copy.end(), *unitStart);
+			vector_int_it	main_unit = *it;
+			std::advance(main_unit, -pair_size + i + 1);
+			copy.insert(copy.end(), *main_unit);
 		}
 	}
 
-	vector_int_it containerIt = vec_container.begin();
-	vector_int_it copyIt = copy.begin();
-	while (copyIt != copy.end())
+	vector_int_it container_it = vec_container.begin();
+	vector_int_it copy_it = copy.begin();
+	while (copy_it != copy.end())
 	{
-		*containerIt = *copyIt;
-		containerIt++;
-		copyIt++;
+		*container_it = *copy_it;
+		container_it++;
+		copy_it++;
 	}
 }
 
@@ -154,11 +156,11 @@ void	mergeinsertionsortD(deque_int &dq_container, int pair_size)
 
 	bool	stragller = (pairs_num % 2);
 
-	deque_int_it start = dq_container.begin();
+	deque_int_it begin = dq_container.begin();
 	deque_int_it end = stepsIt(dq_container.begin(), \
 										pairs_num * pair_size - (stragller * pair_size));
 
-	for (deque_int_it it = start; it != end; std::advance(it, 2 * pair_size))
+	for (deque_int_it it = begin; it != end; std::advance(it, 2 * pair_size))
 	{
 		deque_int_it	first = stepsIt(it, pair_size - 1);
 		deque_int_it	second = stepsIt(it, pair_size * 2 - 1);
@@ -222,37 +224,39 @@ void	mergeinsertionsortD(deque_int &dq_container, int pair_size)
 		main.insert(ndx, *curr_p);
 	}
 
-	deque_int	copy;
+	deque_int	tmp;
 	for (std::deque< deque_int_it>::iterator it = main.begin(); it != main.end(); it++)
 	{
 		for (int i = 0; i < pair_size; i++)
 		{
-			deque_int_it	unitStart = *it;
-			std::advance(unitStart, -pair_size + i + 1);
-			copy.insert(copy.end(), *unitStart);
+			deque_int_it	main_unit = *it;
+			std::advance(main_unit, -pair_size + i + 1);
+			tmp.insert(tmp.end(), *main_unit);
 		}
 	}
 
-	deque_int_it containerIt = dq_container.begin();
-	deque_int_it copyIt = copy.begin();
-	while (copyIt != copy.end())
+	deque_int_it container_it = dq_container.begin();
+	deque_int_it tmp_it = tmp.begin();
+
+	while (tmp_it != tmp.end())
 	{
-		*containerIt = *copyIt;
-		containerIt++;
-		copyIt++;
+		*container_it = *tmp_it;
+		container_it++;
+		tmp_it++;
 	}
 }
 
 void merge_insert_global(int ac, char **av) {
     vector_int vec_container;
     deque_int dq_container;
+
     for (int i = 1; i < ac; i++) {
         std::string str(av[i]);
         if (is_number(str)) {
                 char *end_ptr;
                 double value = strtod(str.c_str(), &end_ptr);
-                if (value > std::numeric_limits<int>::max() || value < std::numeric_limits<int>::min())
-                {
+                if (value > std::numeric_limits<int>::max() \
+					|| value < std::numeric_limits<int>::min()) {
                     std::cerr << "Error: not an positive integer" << std::endl;
                     exit(1);
                 }
@@ -264,27 +268,32 @@ void merge_insert_global(int ac, char **av) {
         }
 
     }
-    std::cout << "Before:" << std::endl;
-    std::for_each(vec_container.begin(), vec_container.end(), printo);
-    std::cout << std::endl;
-	std::cout << "Before:" << std::endl;
-    std::for_each(dq_container.begin(), dq_container.end(), printo);
-    std::cout << std::endl;
+    std::cout << "Before:	";
+    std::for_each(vec_container.begin(), vec_container.begin() + (vec_container.size() > 10 ? 4 : vec_container.size()), printo);
+    std::cout << (vec_container.size() > 10 ? "[..]" : "") << std::endl;
 
-	clock_t start;
-	clock_t end;
+	timeval start, end;
 
-	start = clock();
+    gettimeofday(&start, NULL);
     mergeinsertionsortV(vec_container, 1);
-	end = clock();
-	double time_v = static_cast<double>((end - start) * 1000000.0) / CLOCKS_PER_SEC;
-    mergeinsertionsortD(dq_container, 1);
+    gettimeofday(&end, NULL);
 
-    std::cout << "After: " << std::fixed << time_v << " us" << std::endl;
-    std::for_each(vec_container.begin(), vec_container.end(), printo);
-    std::cout << std::endl;
-	std::cout << "After:" << std::endl;
-    std::for_each(dq_container.begin(), dq_container.end(), printo);
-    std::cout << std::endl;
+
+    std::cout << "After:	";
+    std::for_each(vec_container.begin(), vec_container.begin() + (vec_container.size() > 10 ? 4 : vec_container.size()), printo);
+    std::cout << (vec_container.size() > 10 ? "[..]" : "") << std::endl;
+	size_t seconds = end.tv_sec - start.tv_sec;
+    size_t microseconds = end.tv_usec - start.tv_usec;
+    size_t elapsed = (seconds * 1000000) + microseconds;
+    std::cout << "Time to process a range of "<< vec_container.size() << " elements with std::vector<int> : " << std::fixed << elapsed << " µs" << std::endl;
+    gettimeofday(&start, NULL);
+    mergeinsertionsortD(dq_container, 1);
+    gettimeofday(&end, NULL);
+
+	seconds = end.tv_sec - start.tv_sec;
+	microseconds = end.tv_usec - start.tv_usec;
+	elapsed = (seconds * 1000000) + microseconds;
+
+    std::cout << "Time to process a range of "<< dq_container.size() << " elements with std::deque<int> : " << std::fixed << elapsed << " µs" << std::endl;
 }
 
