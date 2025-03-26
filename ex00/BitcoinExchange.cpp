@@ -13,10 +13,16 @@ bool is_number(std::string str) {
 }
 
 bool check_day(std::string date) {
+	if (!is_number(date.substr(8, 2)) || !is_number(date.substr(5, 2)) || !is_number(date.substr(0, 4)))
+		return false;
 	std::string day = date.substr(8, 2);
 	int dayValue = std::stoi(day);
 	int monthValue = std::stoi(date.substr(5, 2));
 	int yearValue = std::stoi(date.substr(0, 4));
+
+	if (monthValue > 12 || monthValue < 1){
+		return false;
+	}
 
 	if (date.length() != 10) {
 		return false;
@@ -67,7 +73,7 @@ float process_data(std::map<std::string, float> data, std::string date) {
 		if (it != data.begin()) {
 			--it;
 		} else {
-			std::cout << "Error: no lower date available in the data." << std::endl;
+			std::cout << "Error: no lower date available in the data file." << std::endl;
 			return -1;
 		}
 	}
@@ -134,6 +140,10 @@ void btc(char **av) {
 		}
 		size_t pos1 = line.find('|', 0);
 		std::string first = line.substr(0, pos1 - 1);
+		if (first.empty()) {
+			std::cout << "Error: bad input => date is not found !! `" << line  << "`" << std::endl;
+			continue;
+		}
 		std::string second = line.substr(pos1 + 2, line.size() - pos1 + 2);
 		std::pair<std::string, float> pair_file;
 		char *endptr;

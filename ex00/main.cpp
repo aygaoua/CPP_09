@@ -7,6 +7,12 @@ int main(int ac, char **av) {
 		std::cout << "Error: could not open file." << std::endl;
 		return (1);
 	}
-	btc(av);
+	try {
+		btc(av);
+	}
+	catch(std::exception &e) {
+		std::cout << "Error: " << e.what() << std::endl;
+	}
+
 	return (0);
 }
