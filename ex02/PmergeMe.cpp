@@ -119,7 +119,6 @@ void	mergeinsertionsortV(vector_int &vec_container, int pair_size)
 																		curr_a_i, \
 																		*curr_p, \
 																		compare<vector_int_it>);
-		std::cout << main.size() - pend.size() + stragller << " " << std::endl;
 		main.insert(ndx, *curr_p);
 		pend.erase(pend.begin());
 	}
