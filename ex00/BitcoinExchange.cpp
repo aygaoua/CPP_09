@@ -12,13 +12,21 @@ bool is_number(std::string str) {
 	return true;
 }
 
+int my_stoi(std::string &s) {
+    int i;
+    std::istringstream(s) >> i;
+    return i;
+}
+
 bool check_day(std::string date) {
 	if (!is_number(date.substr(8, 2)) || !is_number(date.substr(5, 2)) || !is_number(date.substr(0, 4)))
 		return false;
 	std::string day = date.substr(8, 2);
-	int dayValue = std::stoi(day);
-	int monthValue = std::stoi(date.substr(5, 2));
-	int yearValue = std::stoi(date.substr(0, 4));
+	int dayValue = my_stoi(day);
+	std::string month = date.substr(5, 2);
+	int monthValue = my_stoi(month);
+	std::string year = date.substr(0, 4);
+	int yearValue = my_stoi(year);
 
 	if (monthValue > 12 || monthValue < 1){
 		return false;
