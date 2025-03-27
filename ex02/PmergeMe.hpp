@@ -15,11 +15,11 @@ typedef std::deque<int>::iterator	deque_int_it;
 
 bool		is_number			(std::string str);
 void		printo				(int n);
-size_t		j_s_generator(size_t n);
-void		swap_pairs(vector_int_it first, int pair_size);
-void		swap_pairs(deque_int_it first, int pair_size);
+size_t		j_s_generator		(size_t n);
+void		swap_pairs			(vector_int_it first, int pair_size);
+void		swap_pairs			(deque_int_it first, int pair_size);
 void		mergeinsertionsortV	(vector_int &vec_container, int pair_size);
-void		mergeinsertionsortD(deque_int &dq_container, int pair_size);
+void		mergeinsertionsortD	(deque_int &dq_container, int pair_size);
 void		merge_insert_global	(int ac, char **av);
 
 template<typename T>

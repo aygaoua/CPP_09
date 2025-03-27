@@ -13,14 +13,12 @@ bool is_number(std::string str) {
 	return true;
 }
 
-void printo(int n)
-{
+void printo(int n) {
 
     std::cout << n << " ";
 }
 
-size_t	j_s_generator(size_t n)
-{
+size_t	j_s_generator(size_t n) {
 	if (n == 0)
 		return (0);
 	if (n == 1)
@@ -29,8 +27,7 @@ size_t	j_s_generator(size_t n)
 }
 
 
-void	swap_pairs(vector_int_it first, int pair_size)
-{
+void	swap_pairs(vector_int_it first, int pair_size) {
 	vector_int_it	start = steps_it(first, (-pair_size) + 1);
 	vector_int_it	end = steps_it(start, pair_size);
 	while (start != end) {
@@ -39,8 +36,7 @@ void	swap_pairs(vector_int_it first, int pair_size)
 	}
 }
 
-void	swap_pairs(deque_int_it first, int pair_size)
-{
+void	swap_pairs(deque_int_it first, int pair_size) {
 	deque_int_it	start = steps_it(first, (-pair_size) + 1);
 	deque_int_it	end = steps_it(start, pair_size);
 
@@ -50,8 +46,7 @@ void	swap_pairs(deque_int_it first, int pair_size)
 	}
 }
 
-void	mergeinsertionsortV(vector_int &vec_container, int pair_size)
-{
+void	mergeinsertionsortV(vector_int &vec_container, int pair_size) {
 	int	pairs_num = vec_container.size() / pair_size;
 
 	if (pairs_num < 2)
@@ -143,8 +138,7 @@ void	mergeinsertionsortV(vector_int &vec_container, int pair_size)
 }
 
 
-void	mergeinsertionsortD(deque_int &dq_container, int pair_size)
-{
+void	mergeinsertionsortD(deque_int &dq_container, int pair_size) {
 	int	pairs_num = dq_container.size() / pair_size;
 
 	if (pairs_num < 2)
@@ -204,15 +198,16 @@ void	mergeinsertionsortD(deque_int &dq_container, int pair_size)
 		offset = 0;
 	}
 
-	for (size_t i = 0; i < pend.size(); i++) {
-		std::deque< deque_int_it>::iterator	curr_p = pend.begin() + i;
+	while (!pend.empty()) {
+		std::deque< deque_int_it>::iterator	curr_p = pend.begin();
 		std::deque< deque_int_it>::iterator	curr_a_i = steps_it(main.begin(), \
-																		main.size() - pend.size() + i + stragller);
+																		main.size() - pend.size() + stragller);
 		std::deque< deque_int_it>::iterator	ndx = std::lower_bound(main.begin(), \
 																		curr_a_i, \
 																		*curr_p, \
 																		compare<deque_int_it>);
 		main.insert(ndx, *curr_p);
+		pend.erase(pend.begin());
 	}
 
 	deque_int	tmp;
@@ -234,8 +229,7 @@ void	mergeinsertionsortD(deque_int &dq_container, int pair_size)
 	}
 }
 
-void merge_insert_global(int ac, char **av) 
-{
+void merge_insert_global(int ac, char **av)  {
     vector_int vec_container;
     deque_int dq_container;
 
@@ -251,7 +245,8 @@ void merge_insert_global(int ac, char **av)
                 }
                 dq_container.push_back(value);
                 vec_container.push_back(value);
-        } else {
+        }
+		else {
             std::cerr << "Error: Invalid value: `" << str << "`" <<  std::endl;
             exit (1);
         }
