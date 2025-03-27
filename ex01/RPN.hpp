@@ -5,6 +5,6 @@
 #include <string>
 #include <stack>
 
-void rpn(char *av);
+void	rpn(char *av);
 
 #endif

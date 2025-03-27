@@ -7,11 +7,8 @@ void rpn(char *av) {
     while (av[i])
     {
         if (av[i] == ' ')
-        {
             i++;
-        }
-        if (isdigit(av[i]) && (i == 0 || (av[i - 1] == ' ')))
-        {
+        if (isdigit(av[i]) && (i == 0 || (av[i - 1] == ' '))) {
             int n =  av[i];
             container.push(n - 48);
         }
@@ -19,53 +16,42 @@ void rpn(char *av) {
                         || av[i] == '-' \
                         || av[i] == '*' \
                         || av[i] == '/') \
-                    && container.size() >= 2 && (i == 0 || (av[i - 1] == ' ')))
-        {
+                    && container.size() >= 2 && (i == 0 || (av[i - 1] == ' '))) {
             long a = container.top();
             container.pop();
             long b = container.top();
             container.pop();
-            switch (av[i])
-            {
-                case '+':
-                {
-                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min())
-                    {
+            switch (av[i]) {
+                case '+': {
+                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min()) {
                         std::cerr << "Error: out of range of integer !!" << std::endl;
                         exit(0);
                     }
                     container.push(a + b);
                     break;
                 }
-                case '-':
-                {
-                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min())
-                    {
+                case '-': {
+                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min()) {
                         std::cerr << "Error: out of range of integer !!" << std::endl;
                         exit(0);
                     }
                     container.push(b - a);
                     break;
                 }
-                case '*':
-                {
-                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min())
-                    {
+                case '*': {
+                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min()) {
                         std::cerr << "Error: out of range of integer !!" << std::endl;
                         exit(0);
                     }
                     container.push(a * b);
                     break;
                 }
-                case '/':
-                {
-                    if (a == 0)
-                    {
+                case '/': {
+                    if (a == 0) {
                         std::cerr << "Error: deviding by zero !!" << std::endl;
                         exit(0);
                     }
-                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min())
-                    {
+                    if (a * b > std::numeric_limits<int>::max() || a * b < std::numeric_limits<int>::min()) {
                         std::cerr << "Error: out of range of integer !!" << std::endl;
                         exit(0);
                     }
@@ -74,8 +60,7 @@ void rpn(char *av) {
                 }
             }
         }
-        else
-        {
+        else {
             std::cerr << "Error" << std::endl;
             exit (1);
         }
