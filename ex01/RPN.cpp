@@ -82,7 +82,7 @@ void rpn(char *av) {
         i++;
     }
     if (container.size() != 1)
-        std::cerr << "Error !" << std::endl;
+        std::cerr << "Error" << std::endl;
     else
         std::cout << container.top() << std::endl;
 }
